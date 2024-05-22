@@ -11,11 +11,13 @@ const variantSchema = new Schema<TVariant>(
 );
 
 // Schema for TInventory
-const inventorySchema = new Schema<TInventory>({
+const inventorySchema = new Schema<TInventory>(
+  {
     quantity: { type: Number, required: true },
     inStock: { type: Boolean, required: true },
-}, { _id: false });
-
+  },
+  { _id: false }
+);
 
 // Schema for TProduct
 const productSchema = new Schema<TProduct>({
@@ -26,6 +28,29 @@ const productSchema = new Schema<TProduct>({
   tags: { type: [String], required: true },
   variants: { type: [variantSchema], required: true },
   inventory: { type: inventorySchema, required: true },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+// Query middleware
+productSchema.pre("find", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+
+  next();
+});
+
+productSchema.pre("findOne", function (next) {
+  this.findOne({ isDeleted: { $ne: true } });
+
+  next();
+});
+
+// Query middleware/hook for preventing to get deleted data: aggregate
+productSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
 });
 
 export const ProductModel = model<TProduct>("Product", productSchema);
