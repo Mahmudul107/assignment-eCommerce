@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { TInventory, TProduct, TVariant } from './student.interface';
+import { TInventory, TProduct, TVariant } from './product.interface';
 
 // Schema for TVariant
 const variantSchema = new Schema<TVariant>({
