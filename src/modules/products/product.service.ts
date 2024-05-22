@@ -13,7 +13,14 @@ const retrieveAllProductsFromDB = async () =>{
     return result;
 }
 
+// Retrieve a specific Product
+const retrieveSingleProductFromDB = async (id: string) =>{
+    const result = await ProductModel.findOne({_id:id});
+    return result;
+}
+
 export const ProductServices = {
     createNewProductIntoDB,
     retrieveAllProductsFromDB,
+    retrieveSingleProductFromDB,
 }

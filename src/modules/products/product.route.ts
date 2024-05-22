@@ -9,6 +9,9 @@ router.post('/api/products', ProductController.createNewProduct);
 // Retrieve a List of All Products
 router.get('/api/products', ProductController.getAllProducts);
 
+// Retrieve a List of All Products
+router.get('/api/products/:productId', ProductController.getSingleProduct);
+
 
 
 
