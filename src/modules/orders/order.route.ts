@@ -3,20 +3,14 @@ import { OrderController } from "./order.controller";
 
 const router = express.Router();
 
-// Create a new product
+// Create a new order
 router.post("/api/orders", OrderController.createNewOrder);
 
-// // Retrieve a List of All Products
-// router.get("/api/products", ProductController.getAllProducts);
+// Retrieve a List of All orders
+router.get("/api/orders", OrderController.getAllOrders);
 
-// // Retrieve a single Product
-// router.get("/api/products/:productId", ProductController.getSingleProduct);
-
-// // Update Product Information
-// router.put("/api/products/:productId", ProductController.updateProduct);
-
-// // Delete a Product from DB
-// router.delete("/api/products/:productId", ProductController.deleteProduct);
+// Retrieve orders by user email
+router.get("/api/orders/email", OrderController.getOrdersByEmail);
 
 
 export const OrderRoutes = router;
