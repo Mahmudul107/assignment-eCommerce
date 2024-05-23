@@ -1,39 +1,66 @@
 import { Request, Response } from "express";
 import { OrderServices } from "./order.service";
-import { z } from "zod";
 import orderValidationSchema from "./order.validation";
 
 const createNewOrder = async (req: Request, res: Response) => {
   try {
-    // Schema validation using Zod
-    
     const { order: orderData } = req.body;
-    
-    const zodParsedData = orderValidationSchema.parse(orderData);
-    const result = await OrderServices.createNewOrderIntoDB(zodParsedData);
+
+    // if required data exists
+    if (!orderData || !orderData.productId || !orderData.quantity) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order data",
+      });
+    }
+
+    // if the ordered quantity is a positive integer
+    const quantity = parseInt(orderData.quantity);
+    if (isNaN(quantity) || quantity <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid quantity",
+      });
+    }
+
+    // Create the new order
+    const result = await OrderServices.createNewOrderIntoDB(orderData);
 
     res.status(200).json({
       success: true,
       message: "Order created successfully!",
       data: result,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    let statusCode = 500;
+    let message = "Internal Server Error";
+
+    // Type assertion to specify the type of error
+    const err = error as Error;
+
+    if (err.message === "Insufficient quantity available in inventory") {
+      statusCode = 400;
+      message = err.message;
+    }
+
+    res.status(statusCode).json({
+      success: false,
+      message: message,
+    });
   }
 };
-
 
 const getOrders = async (req: Request, res: Response) => {
   try {
     const { email } = req.query;
 
-    // Construct the query object
+    // build query object
     const query = email ? { email: email as string } : {};
 
     // Retrieve orders based on the query object
     const result = await OrderServices.retrieveOrdersFromDB(query);
 
-    // Set the success message based on the presence of the email
+    // Set the success message based on email
     const message = email
       ? `Orders fetched successfully for user ${email} `
       : "Orders fetched successfully!";
@@ -54,5 +81,5 @@ const getOrders = async (req: Request, res: Response) => {
 
 export const OrderController = {
   createNewOrder,
-  getOrders
+  getOrders,
 };
