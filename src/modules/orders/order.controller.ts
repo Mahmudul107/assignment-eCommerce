@@ -4,32 +4,31 @@ import { TOrder } from "./order.interface";
 import orderValidationSchema from "./order.validation";
 
 const createNewOrder = async (req: Request, res: Response) => {
-  const { order: orderData } = req.body;
+  const orderData = req.body;
 
   // Validate order data
   const validationResult = orderValidationSchema.safeParse(orderData);
 
   try {
-    if (validationResult.success) {
-      // If validation succeeds, create the new order
-      const result = await OrderServices.createNewOrderIntoDB(orderData);
-
-      // Send success response
-      res.status(201).json({
-        success: true,
-        message: "Order created successfully!",
-        data: result,
-      });
-    } else {
+    if (!validationResult.success) {
       // If validation fails, return validation errors
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Validation failed",
         errors: validationResult.error.errors,
       });
     }
+
+    const result = await OrderServices.createNewOrderIntoDB(orderData);
+
+    // Send success response
+    res.status(201).json({
+      success: true,
+      message: "Order created successfully!",
+      data: result,
+    });
   } catch (err) {
-    // Handle server errors
+    // Handle generic server errors
     console.error(err);
     res.status(500).json({
       success: false,
@@ -37,6 +36,8 @@ const createNewOrder = async (req: Request, res: Response) => {
     });
   }
 };
+
+
 
 // const createNewOrder = async (req: Request, res: Response) => {
 //   const orderData: TOrder = req.body;

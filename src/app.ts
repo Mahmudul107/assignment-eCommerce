@@ -12,7 +12,7 @@ app.use("/", ProductRoutes);
 app.use("/", OrderRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
+  res.send("E-Commerce is running on..");
 });
 
 export default app;

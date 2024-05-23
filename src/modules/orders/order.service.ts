@@ -22,6 +22,7 @@ const createNewOrderIntoDB = async (order: TOrder) => {
     if (order.quantity > product.inventory.quantity) {
       throw new Error("Insufficient stock");
     }
+    const result = await OrderModel.create(order);
 
     // Update inventory
     product.inventory.quantity -= order.quantity;
@@ -31,7 +32,6 @@ const createNewOrderIntoDB = async (order: TOrder) => {
     await product.save();
 
     // Create the order
-    const result = await OrderModel.create(order);
     return result;
   } catch (error) {
     console.error("Error creating order:", error);
