@@ -20,3 +20,6 @@ export type TProduct = {
   inventory: TInventory;
   isDeleted: boolean;
 };
+
+
+

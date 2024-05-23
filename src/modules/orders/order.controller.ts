@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
 import { OrderServices } from "./order.service";
+import { z } from "zod";
+import orderValidationSchema from "./order.validation";
 
 const createNewOrder = async (req: Request, res: Response) => {
-  const { order: orderData } = req.body;
-
   try {
-    const result = await OrderServices.createNewOrderIntoDB(orderData);
+    // Schema validation using Zod
+    
+    const { order: orderData } = req.body;
+    
+    const zodParsedData = orderValidationSchema.parse(orderData);
+    const result = await OrderServices.createNewOrderIntoDB(zodParsedData);
 
     res.status(200).json({
       success: true,
@@ -17,41 +22,37 @@ const createNewOrder = async (req: Request, res: Response) => {
   }
 };
 
-// Retrieve a List of All Products
-const getAllOrders = async (req: Request, res: Response) => {
+
+const getOrders = async (req: Request, res: Response) => {
   try {
-    const result = await OrderServices.retrieveAllOrdersFromDB();
+    const { email } = req.query;
+
+    // Construct the query object
+    const query = email ? { email: email as string } : {};
+
+    // Retrieve orders based on the query object
+    const result = await OrderServices.retrieveOrdersFromDB(query);
+
+    // Set the success message based on the presence of the email
+    const message = email
+      ? `Orders fetched successfully for user ${email} `
+      : "Orders fetched successfully!";
+
     res.status(200).json({
       success: true,
-      message: "Orders fetched successfully!",
+      message: message,
       data: result,
     });
   } catch (err) {
     console.log(err);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching orders",
+    });
   }
 };
 
-// Retrieve orders by user email
-const getOrdersByEmail = async (req: Request, res: Response) => {
-    try {
-      const { email } = req.query;
-      const result = await OrderServices.retrieveOrdersByEmailFromDB(email as string);
-      res.status(200).json({
-        success: true,
-        message: "Orders fetched successfully for user email!",
-        data: result,
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        success: false,
-        message: "Error fetching orders",
-      });
-    }
-  };
-
 export const OrderController = {
   createNewOrder,
-  getAllOrders,
-  getOrdersByEmail,
+  getOrders
 };

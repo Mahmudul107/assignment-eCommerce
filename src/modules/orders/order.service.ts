@@ -6,20 +6,14 @@ const createNewOrderIntoDB = async (order: TOrder) => {
   return result;
 };
 
-// Retrieve a List of All Orders
-const retrieveAllOrdersFromDB = async () => {
-  const result = await OrderModel.find();
+// Retrieve orders based on a query
+const retrieveOrdersFromDB = async (query: object) => {
+  const result = await OrderModel.find(query);
   return result;
 };
 
-// Retrieve orders by user email
-const retrieveOrdersByEmailFromDB = async (email: string) => {
-  const result = await OrderModel.find({ email });
-  return result;
-};
 
 export const OrderServices = {
   createNewOrderIntoDB,
-  retrieveAllOrdersFromDB,
-  retrieveOrdersByEmailFromDB,
+  retrieveOrdersFromDB
 };

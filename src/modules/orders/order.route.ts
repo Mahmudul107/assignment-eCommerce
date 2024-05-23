@@ -7,10 +7,10 @@ const router = express.Router();
 router.post("/api/orders", OrderController.createNewOrder);
 
 // Retrieve a List of All orders
-router.get("/api/orders", OrderController.getAllOrders);
+// router.get("/api/orders", OrderController.getAllOrders);
 
 // Retrieve orders by user email
-router.get("/api/orders/email", OrderController.getOrdersByEmail);
+router.get("/api/orders/", OrderController.getOrders);
 
 
 export const OrderRoutes = router;
