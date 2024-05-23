@@ -50,6 +50,7 @@ const createNewOrder = async (req: Request, res: Response) => {
   }
 };
 
+// get orders
 const getOrders = async (req: Request, res: Response) => {
   try {
     const { email } = req.query;
@@ -62,7 +63,7 @@ const getOrders = async (req: Request, res: Response) => {
 
     // Set the success message based on email
     const message = email
-      ? `Orders fetched successfully for user ${email} `
+      ? `Orders fetched successfully for user email: ${email} `
       : "Orders fetched successfully!";
 
     res.status(200).json({
