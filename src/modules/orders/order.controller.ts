@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { OrderServices } from "./order.service";
-import orderValidationSchema from "./order.validation";
 
 const createNewOrder = async (req: Request, res: Response) => {
   try {

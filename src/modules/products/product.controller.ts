@@ -1,11 +1,24 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./product.service";
+import Joi from "joi";
+import productValidationSchema from "./product.validation";
 
 const createNewProduct = async (req: Request, res: Response) => {
   const { product: productData } = req.body;
 
+  // Creating schema validation using joi
+
+  const { error } = productValidationSchema.validate(productData);
   try {
     const result = await ProductServices.createNewProductIntoDB(productData);
+
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: "Something went wrong",
+        error: error.details
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -51,7 +64,7 @@ const updateProduct = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
     const updateData = req.body;
-    console.log(updateData, 'updated product data -controller');
+    console.log(updateData, "updated product data -controller");
     const result = await ProductServices.updateSingleProductFromDB(
       productId,
       updateData
@@ -86,5 +99,5 @@ export const ProductController = {
   getAllProducts,
   getSingleProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };
