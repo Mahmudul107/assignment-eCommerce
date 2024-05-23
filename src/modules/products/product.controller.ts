@@ -1,35 +1,41 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./product.service";
-import Joi from "joi";
 import productValidationSchema from "./product.validation";
 
 const createNewProduct = async (req: Request, res: Response) => {
   const { product: productData } = req.body;
 
-  // Creating schema validation using joi
+  // Validate product data
+  const { error } = productValidationSchema.safeParse(productData);
 
-  const { error } = productValidationSchema.validate(productData);
   try {
-    const result = await ProductServices.createNewProductIntoDB(productData);
-
     if (error) {
-      res.status(500).json({
+      // If validation fails, return validation errors
+      return res.status(400).json({
         success: false,
-        message: "Something went wrong",
-        error: error.details
+        message: "Validation failed",
+        errors: error.errors,
       });
     }
 
-    res.status(200).json({
+    // If validation passes, create the new product
+    const result = await ProductServices.createNewProductIntoDB(productData);
+
+    // Send success response
+    res.status(201).json({
       success: true,
       message: "Product created successfully!",
       data: result,
     });
   } catch (err) {
-    console.log(err);
+    // Handle server errors
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
-
 // Retrieve a List of All Products
 const getAllProducts = async (req: Request, res: Response) => {
   try {

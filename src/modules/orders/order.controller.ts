@@ -1,53 +1,62 @@
 import { Request, Response } from "express";
 import { OrderServices } from "./order.service";
+import { TOrder } from "./order.interface";
+import orderValidationSchema from "./order.validation";
 
 const createNewOrder = async (req: Request, res: Response) => {
+  const { order: orderData } = req.body;
+
+  // Validate order data
+  const validationResult = orderValidationSchema.safeParse(orderData);
+
   try {
-    const { order: orderData } = req.body;
+    if (validationResult.success) {
+      // If validation succeeds, create the new order
+      const result = await OrderServices.createNewOrderIntoDB(orderData);
 
-    // if required data exists
-    if (!orderData || !orderData.productId || !orderData.quantity) {
-      return res.status(400).json({
+      // Send success response
+      res.status(201).json({
+        success: true,
+        message: "Order created successfully!",
+        data: result,
+      });
+    } else {
+      // If validation fails, return validation errors
+      res.status(400).json({
         success: false,
-        message: "Invalid order data",
+        message: "Validation failed",
+        errors: validationResult.error.errors,
       });
     }
-
-    // if the ordered quantity is a positive integer
-    const quantity = parseInt(orderData.quantity);
-    if (isNaN(quantity) || quantity <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid quantity",
-      });
-    }
-
-    // Create the new order
-    const result = await OrderServices.createNewOrderIntoDB(orderData);
-
-    res.status(200).json({
-      success: true,
-      message: "Order created successfully!",
-      data: result,
-    });
-  } catch (error) {
-    let statusCode = 500;
-    let message = "Internal Server Error";
-
-    // Type assertion to specify the type of error
-    const err = error as Error;
-
-    if (err.message === "Insufficient quantity available in inventory") {
-      statusCode = 400;
-      message = err.message;
-    }
-
-    res.status(statusCode).json({
+  } catch (err) {
+    // Handle server errors
+    console.error(err);
+    res.status(500).json({
       success: false,
-      message: message,
+      message: "Internal server error",
     });
   }
 };
+
+// const createNewOrder = async (req: Request, res: Response) => {
+//   const orderData: TOrder = req.body;
+
+//   try {
+//     const result = await OrderServices.createNewOrderIntoDB(orderData);
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Order created successfully!",
+//       data: result,
+//     });
+//   } catch (err:any) {
+//     console.error("Error in createNewOrder:", err); // Log the error
+//     res.status(500).json({
+//       success: false,
+//       message: err.message || "Error creating order",
+//     });
+//   }
+// };
 
 // get orders
 const getOrders = async (req: Request, res: Response) => {

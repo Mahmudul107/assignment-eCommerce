@@ -10,7 +10,7 @@ router.post("/api/orders", OrderController.createNewOrder);
 // router.get("/api/orders", OrderController.getAllOrders);
 
 // Retrieve orders by user email
-router.get("/api/orders/", OrderController.getOrders);
+router.get("/api/orders", OrderController.getOrders);
 
 
 export const OrderRoutes = router;

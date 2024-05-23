@@ -1,14 +1,11 @@
-// order.validation.ts
 import { z } from "zod";
 
+
 const orderValidationSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  productId: z.string().nonempty({ message: "Product ID is required" }),
-  price: z.number().positive({ message: "Price must be a positive number" }),
-  quantity: z
-    .number()
-    .int()
-    .positive({ message: "Quantity must be a positive integer" }),
+  email: z.string().email(),
+  productId: z.string(),
+  price: z.number(),
+  quantity: z.number(),
 });
 
 export default orderValidationSchema;

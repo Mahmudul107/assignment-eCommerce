@@ -23,16 +23,16 @@ const updateSingleProductFromDB = async (id: string, updateData: any) => {
   const result = await ProductModel.updateOne(
     { _id: id },
     { $set: updateData },
-    {new: true}
+    { new: true }
   );
   return result;
 };
 
 // Delete a Product from DB
 const deleteProductFromDB = async (id: string) => {
-    const result = await ProductModel.updateOne({ _id: id }, {isDeleted: true});
-    return result;
-  };
+  const result = await ProductModel.deleteOne({ _id: id }, { isDeleted: true });
+  return result;
+};
 
 export const ProductServices = {
   createNewProductIntoDB,
