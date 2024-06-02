@@ -1,4 +1,4 @@
-import { ProductModel } from "../products/product.model";
+import { Product } from "../products/product.model";
 import { TOrder } from "./order.interface";
 import { OrderModel } from "./order.model";
 
@@ -9,43 +9,33 @@ import { OrderModel } from "./order.model";
 // };
 
 const createNewOrderIntoDB = async (order: TOrder) => {
-  try {
-    // Find the product to check inventory
-    const product = await ProductModel.findById(order.productId);
+  const product = await Product.findById(order.productId);
 
-    if (!product) {
-      console.error(`Product not found: ${order.productId}`);
-      throw new Error("Product not found");
-    }
-
-    // Check if the ordered quantity exceeds available inventory
-    if (order.quantity > product.inventory.quantity) {
-      throw new Error("Insufficient stock");
-    }
-    const result = await OrderModel.create(order);
-
-    // Update inventory
-    product.inventory.quantity -= order.quantity;
-    product.inventory.inStock = product.inventory.quantity > 0;
-
-    // Save the updated product
-    await product.save();
-
-    // Create the order
-    return result;
-  } catch (error) {
-    console.error("Error creating order:", error);
-    throw error;
+  if (!product) {
+    throw new Error("Product not found");
   }
+
+  if (order.quantity > product.inventory.quantity) {
+    throw new Error("Insufficient stock");
+  }
+
+  const result = await OrderModel.create(order);
+
+  // Update inventory
+  product.inventory.quantity -= order.quantity;
+  product.inventory.inStock = product.inventory.quantity > 0;
+  await product.save();
+
+  return result;
 };
+
 // Retrieve orders based on a query
 const retrieveOrdersFromDB = async (query: object) => {
   const result = await OrderModel.find(query);
   return result;
 };
 
-
 export const OrderServices = {
   createNewOrderIntoDB,
-  retrieveOrdersFromDB
+  retrieveOrdersFromDB,
 };

@@ -1,36 +1,43 @@
 import { TProduct } from "./product.interface";
-import { ProductModel } from "./product.model";
+import { Product } from "./product.model";
 
 const createNewProductIntoDB = async (product: TProduct) => {
-  const result = await ProductModel.create(product);
+  const result = await Product.create(product);
   return result;
 };
 
 // Retrieve a List of All Products
 const retrieveAllProductsFromDB = async () => {
-  const result = await ProductModel.find();
+  const result = await Product.find();
   return result;
 };
 
 // Retrieve a specific Product
 const retrieveSingleProductFromDB = async (id: string) => {
-  const result = await ProductModel.findOne({ _id: id });
+  const result = await Product.findOne({ _id: id });
   return result;
 };
 
 // Update Product Information
-const updateSingleProductFromDB = async (id: string, updateData: any) => {
-  const result = await ProductModel.updateOne(
-    { _id: id },
-    { $set: updateData },
-    { new: true }
-  );
+// const updateSingleProductFromDB = async (id: string, updateData: any) => {
+//   const result = await ProductModel.updateOne(
+//     { _id: id },
+//     { $set: updateData },
+//     { new: true }
+//   );
+//   return result;
+// };
+
+const updateSingleProductFromDB = async (id: string, productData: TProduct) => {
+  const result = await Product.findByIdAndUpdate(id, productData, {
+    new: true,
+  });
   return result;
 };
 
 // Delete a Product from DB
 const deleteProductFromDB = async (id: string) => {
-  const result = await ProductModel.deleteOne({ _id: id }, { isDeleted: true });
+  const result = await Product.deleteOne({ _id: id }, { isDeleted: true });
   return result;
 };
 

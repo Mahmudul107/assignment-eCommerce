@@ -27,17 +27,15 @@ const createNewOrder = async (req: Request, res: Response) => {
       message: "Order created successfully!",
       data: result,
     });
-  } catch (err) {
-    // Handle generic server errors
-    console.error(err);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+  } catch (err: any) {
+    if (err.message === "Insufficient stock") {
+      return res.status(404).json({
+        success: false,
+        message: "Insufficient quantity available in inventory",
+      });
+    }
   }
 };
-
-
 
 // const createNewOrder = async (req: Request, res: Response) => {
 //   const orderData: TOrder = req.body;
@@ -84,7 +82,7 @@ const getOrders = async (req: Request, res: Response) => {
     console.log(err);
     res.status(500).json({
       success: false,
-      message: "Error fetching orders",
+      message: "Order not found",
     });
   }
 };

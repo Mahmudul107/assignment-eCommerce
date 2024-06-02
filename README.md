@@ -32,7 +32,6 @@
 ** List All: GET /api/orders
 
 ** Get by Email: GET /api/orders?email=<email>
->>>>>>> eab34a4836c8ed99d472a9262ec1c45127fe9db9
 
 \*\* Create: POST /api/products
 

@@ -53,4 +53,4 @@ productSchema.pre("aggregate", function (next) {
   next();
 });
 
-export const ProductModel = model<TProduct>("Product", productSchema);
+export const Product = model<TProduct>("Product", productSchema);
