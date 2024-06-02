@@ -13,10 +13,12 @@ app.use("/", ProductRoutes);
 app.use("/", OrderRoutes);
 
 // Use the not found middleware
-app.use(notFoundRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("E-Commerce is running on..");
 });
+
+// Not found routes
+app.use(notFoundRoute);
 
 export default app;
